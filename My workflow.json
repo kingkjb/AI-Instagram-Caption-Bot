@@ -1,0 +1,147 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "678eabcc-6f4d-492a-8702-0947d0d883f3",
+      "name": "Telegram Trigger",
+      "webhookId": "1a0c859a-fd5d-47a2-a5e0-ceadf7eb2d58",
+      "credentials": {
+        "telegramApi": {
+          "id": "5YaBWE8SaJGEUusm",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Analyze this image and write 3 viral captions. Keep each caption under 800 characters. Include 5-10 hastags for each."
+            },
+            {}
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "247b59f7-1af8-43e1-ade0-4cd94da2672b",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "QwLpO5y9BnARlARa",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5230820756",
+        "text": "={{ $json.my_caption }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "bf1be73c-04d2-4c51-8eb9-62f657e2d89d",
+      "name": "Send a text message",
+      "webhookId": "f5ce6e54-034d-420c-bbd3-ce83b8141b9b",
+      "credentials": {
+        "telegramApi": {
+          "id": "5YaBWE8SaJGEUusm",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputData = $input.first().json;\nconst text = inputData.content.parts[0].text; \n\nconst chunkSize = 4000; \nconst result = [];\n\nfor (let i = 0; i < text.length; i += chunkSize) {\n  result.push({ json: { my_caption: text.slice(i, i + chunkSize) } });\n}\n\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        144
+      ],
+      "id": "1e05a34c-3ff4-41bb-86da-dda64d3241a3",
+      "name": "Code in JavaScript",
+      "alwaysOutputData": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "5cb81a07-0615-4a17-8aa8-21002d9baa34",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a25033c26a192f691e3e80dd4083298a76c85d5d153cc311cc31c96d96188650"
+  },
+  "id": "N1JwTRSAxItQ93ez",
+  "tags": []
+}
