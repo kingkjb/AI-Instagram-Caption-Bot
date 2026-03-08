@@ -15,5 +15,6 @@ AI-Powered Instagram Caption Bot
 ​Smart Message Chunking: Custom JS logic bypasses Telegram’s 4,096-character limit by splitting long AI responses into multiple messages.
 ​Production Ready: 24/7 background execution with persistent data logging.
 
-
+![Workflow Diagram]
+Screenshot 2026-03-08 205542.png
 
